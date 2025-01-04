@@ -251,11 +251,10 @@ You can make `custom_skin.css` file from the [Sandstone custom-skin sample](http
 //
 .sandstone-theme {
 	--sand-bg-color: #000000;
-	--sand-text-color-rgb: 230, 230, 230;
-	--sand-component-text-color-rgb: 230, 230, 230;
+	--sand-text-color: #E6E6E6;
+	--sand-component-text-color: #E6E6E6;
 	--sand-component-bg-color: #7D848C;
 	--sand-component-active-indicator-bg-color: #E6E6E6;
 	--sand-component-inactive-indicator-bg-color: #9DA2A7;
 }
 ```
-> Note: You should be sure to put RGB-separated values in the CSS variable names ending with `-rgb` if you edit the value in the file directly.

@@ -197,7 +197,7 @@ const Spotlight = (function () {
 		}
 	}
 
-	function focusElement (elem, containerIds, fromPointer) {
+	function focusElement (elem, containerIds, fromPointer, preventScroll) {
 		if (!elem) {
 			return false;
 		}
@@ -214,7 +214,7 @@ const Spotlight = (function () {
 			return true;
 		}
 
-		const focusOptions = isWithinOverflowContainer(elem, containerIds) ? {preventScroll: true} : null;
+		const focusOptions = preventScroll || isWithinOverflowContainer(elem, containerIds) ? {preventScroll: true} : null;
 
 		let silentFocus = function () {
 			elem.focus(focusOptions);
@@ -750,16 +750,19 @@ const Spotlight = (function () {
 		 * @param {String|Node} [elem] The spotlight ID or selector for either a spottable
 		 *  component or a spotlight container, or spottable node. If not supplied, the default
 		 *  container will be focused.
-		 * @param {Object} [containerOption] The object including `enterTo` and `toOuterContainer`.
-		 *  It works when the first parameter `elem` is either a spotlight container ID or a spotlight container node.
-		 * @param {('last-focused'|'default-element'|'topmost')} [containerOption.enterTo] Specifies preferred
+		 * @param {Object} [options] The object including `enterTo`, `toOuterContainer`, and `preventScroll`.
+		 *  `enterTo` and `toOuterContainer` work when the first parameter `elem` is either
+		 *  a spotlight container ID or a spotlight container node.
+		 * @param {('last-focused'|'default-element'|'topmost')} [options.enterTo] Specifies preferred
 		 *  `enterTo` configuration.
-		 * @param {Boolean} [containerOption.toOuterContainer] If the proper target is not found, search one
+		 * @param {Boolean} [options.toOuterContainer] If the proper target is not found, search one
 		 *  recursively to outer container.
+		 * @param {Boolean} [options.preventScroll] Prevents the focused element from an automatic scrolling
+		 *  into view after focusing the element.
 		 * @returns {Boolean} `true` if focus successful, `false` if not.
 		 * @public
 		 */
-		focus: function (elem, containerOption = {}) {
+		focus: function (elem, options = {}) {
 			let target = elem;
 			let wasContainerId = false;
 			let currentContainerNode = null;
@@ -768,7 +771,7 @@ const Spotlight = (function () {
 				target = getTargetByContainer();
 			} else if (typeof elem === 'string') {
 				if (getContainerConfig(elem)) {
-					target = getTargetByContainer(elem, containerOption.enterTo);
+					target = getTargetByContainer(elem, options.enterTo);
 					wasContainerId = true;
 					currentContainerNode = getContainerNode(elem);
 				} else if (/^[\w\d-]+$/.test(elem)) {
@@ -778,14 +781,14 @@ const Spotlight = (function () {
 					target = getTargetBySelector(elem);
 				}
 			} else if (isContainer(elem)) {
-				target = getTargetByContainer(getContainerId(elem), containerOption.enterTo);
+				target = getTargetByContainer(getContainerId(elem), options.enterTo);
 				currentContainerNode = elem;
 			}
 
 			const nextContainerIds = getContainersForNode(target);
 			const nextContainerId = last(nextContainerIds);
 			if (isNavigable(target, nextContainerId, true)) {
-				const focused = focusElement(target, nextContainerIds);
+				const focused = focusElement(target, nextContainerIds, false, options.preventScroll);
 
 				if (!focused && wasContainerId) {
 					setLastContainer(elem);
@@ -798,11 +801,11 @@ const Spotlight = (function () {
 				setLastContainer(elem);
 			}
 
-			if (containerOption.toOuterContainer && currentContainerNode) {
+			if (options.toOuterContainer && currentContainerNode) {
 				const outerContainer = getContainersForNode(currentContainerNode.parentElement).pop();
 
 				if (outerContainer) {
-					return this.focus(outerContainer, containerOption);
+					return this.focus(outerContainer, options);
 				}
 			}
 

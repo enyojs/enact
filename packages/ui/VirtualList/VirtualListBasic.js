@@ -407,7 +407,7 @@ class VirtualListBasic extends Component {
 			prevProps.overhang !== this.props.overhang ||
 			prevProps.spacing !== this.props.spacing ||
 			!equals(prevProps.itemSize, this.props.itemSize) ||
-			!shallowEqual(prevProps.itemSizes, this.props.itemSizes)
+			(!this.hasDataSizeChanged && !shallowEqual(prevProps.itemSizes, this.props.itemSizes))
 		) {
 			const {x, y} = this.getXY(this.scrollPosition, 0);
 

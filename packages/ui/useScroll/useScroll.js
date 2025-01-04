@@ -132,6 +132,7 @@ const useScrollBase = (props) => {
 	delete rest.onScrollStart;
 	delete rest.onScrollStop;
 	delete rest.onWheel;
+	delete rest.preventScroll; // scrollMode 'native'
 	delete rest.removeEventListeners;
 	delete rest.scrollStopOnScroll; // scrollMode 'native'
 	delete rest.scrollTo;
@@ -812,6 +813,7 @@ const useScrollBase = (props) => {
 				scrollByPage(ev.keyCode);
 			}
 		} else {
+			props.preventScroll?.(ev);
 			forward('onKeyDown', ev, props);
 		}
 	}

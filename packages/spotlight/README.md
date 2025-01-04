@@ -43,7 +43,7 @@ Spotlight is based on a fork of [JavaScript SpatialNavigation](https://github.co
 Unless otherwise specified, all content, including all source code files and
 documentation files in this repository are:
 
-Copyright (c) 2012-2024 LG Electronics
+Copyright (c) 2012-2025 LG Electronics
 
 Unless otherwise specified or set forth in the NOTICE file, all content,
 including all source code files and documentation files in this repository are:

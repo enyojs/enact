@@ -138,6 +138,16 @@ describe('Spotlight', () => {
 				expect(fn).toBeCalled();
 			}
 		));
+
+		test('should pass preventScroll option', testScenario(
+			scenarios.complexTree,
+			(root) => {
+				const fn = mockFocus(root.querySelector('[data-spotlight-id="s1"]'));
+				Spotlight.focus('s1', {preventScroll: true});
+
+				expect(fn).toHaveBeenCalledWith({preventScroll: true});
+			}
+		));
 	});
 
 	describe('#move', () => {

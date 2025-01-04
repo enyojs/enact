@@ -35,7 +35,7 @@ const userAgentPatterns = [
 ];
 
 // The base supported versions: Used in DEPRECATED warning
-const supportedVersions = {safari: 15.6, chrome: 94, firefox: 115};
+const supportedVersions = {safari: 16.4, chrome: 119, firefox: 128};
 
 const parseUserAgent = (userAgent) => {
 	const detectedInfo = {
