@@ -3,8 +3,10 @@ import {
 	config,
 	defineScreenTypes,
 	getScreenType,
+	getScreenTypeObject,
 	scale,
-	unit
+	unit,
+	updateWorkspaceBounds
 } from '../resolution.js';
 
 describe('Resolution Specs', () => {
@@ -270,6 +272,41 @@ describe('Resolution Specs', () => {
 
 		expect(actualFHD).toBe(expectedFHD);
 		expect(actualHD).toBe(expectedHD);
+	});
+
+	test('should calculate font size when orientation is landscape and shouldScaleFontSize value is true', () => {
+		config.intermediateScreenHandling = 'scale';
+		config.matchSmallerScreenType = true;
+
+		window.innerWidth = 1920;
+		window.innerHeight = 1080;
+
+		// update workspaceBounds
+		updateWorkspaceBounds(window);
+		// update orientation
+		getScreenType();
+		const size = calculateFontSize();
+		const expected = '18px';
+
+		expect(size).toBe(expected);
+
+		// clear window inner size
+		window.innerWidth = 640;
+		window.innerHeight = 480;
+	});
+
+	test('should calculate font size when orientation is portrait and config.orientationHandling is scale', () => {
+		config.orientationHandling = 'scale';
+		const fhdPortrait = {width: 1080, height: 1920};
+		getScreenType(fhdPortrait);
+
+		const size = calculateFontSize();
+		const scrObj = getScreenTypeObject();
+		const screenScale = 1;
+		const expected = scrObj.height / (scrObj.width * scrObj.pxPerRem * screenScale) + 'px';
+
+		expect(size).toBe(expected);
+
 	});
 
 	// NOTE: Currently tough to test selectSrc because it relies on a global variable for screenType

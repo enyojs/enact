@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import {render, screen} from '@testing-library/react';
 
+import {updateBaseFontSize, calculateFontSize} from '../resolution';
 import ResolutionDecorator from '../ResolutionDecorator';
 
 describe('ResolutionDecorator Specs', () => {
@@ -26,6 +27,23 @@ describe('ResolutionDecorator Specs', () => {
 		const div = screen.getByTestId('component');
 
 		expect(div).toHaveClass('enact-res-mhd');
+	});
+
+	test('should change the base font size when screenScale prop changed', () => {
+		const before = 1;
+
+		const Component = ResolutionDecorator('div');
+		const {rerender} = render(<Component data-testid="component" screenScale={before} />);
+		const after = 2;
+		rerender(
+			<Component data-testid="component" screenScale={after} />
+		);
+
+		updateBaseFontSize(calculateFontSize());
+		const value = document.documentElement.style.fontSize;
+		const expected = '72px';
+
+		expect(value).toBe(expected);
 	});
 
 	test.skip('should update the resolution when the screen is resized', function () {

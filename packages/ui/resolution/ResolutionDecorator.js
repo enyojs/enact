@@ -8,7 +8,15 @@ import {Component} from 'react';
 import PropTypes from 'prop-types';
 import hoc from '@enact/core/hoc';
 
-import {init, config as riConfig, defineScreenTypes, getResolutionClasses} from './resolution';
+import {
+	init,
+	calculateFontSize,
+	config as riConfig,
+	defineScreenTypes,
+	getResolutionClasses,
+	updateBaseFontSize,
+	updateScreenScale
+} from './resolution';
 
 /**
  * Default config for `ResolutionDecorator`.
@@ -96,13 +104,29 @@ const ResolutionDecorator = hoc(defaultConfig, (config, Wrapped) => {
 		static displayName = 'ResolutionDecorator';
 
 		static propTypes = /** @lends ui/resolution.ResolutionDecorator.prototype */ {
-			className: PropTypes.string
+			className: PropTypes.string,
+
+			/**
+			 * Screen Scale value for the large screen mode.
+	 		 * Use this value to set the scale of the base font.
+	 		 * This is the value that will be multiplied by pxPerRem, which is determined by the resolution.
+			 *
+			 * @type {Number}
+			 * @default 1
+			 * @public
+			 */
+			screenScale: PropTypes.number
+		};
+
+		static defaultProps = {
+			screenScale: 1
 		};
 
 		constructor (props) {
 			super(props);
 			riConfig.intermediateScreenHandling = config.intermediateScreenHandling;
 			riConfig.matchSmallerScreenType = config.matchSmallerScreenType;
+			updateScreenScale(this.props.screenScale);
 			init({measurementNode: (typeof window !== 'undefined' && window)});
 			this.state = {
 				resolutionClasses: ''
@@ -112,6 +136,10 @@ const ResolutionDecorator = hoc(defaultConfig, (config, Wrapped) => {
 		componentDidMount () {
 			if (config.dynamic) window.addEventListener('resize', this.handleResize);
 			this.rootNode = document.getElementsByClassName(getResolutionClasses())?.[0] || null;
+		}
+
+		componentDidUpdate (prevProps) {
+			if (prevProps.screenScale !== this.props.screenScale) updateBaseFontSize(calculateFontSize());
 		}
 
 		componentWillUnmount () {
@@ -143,11 +171,17 @@ const ResolutionDecorator = hoc(defaultConfig, (config, Wrapped) => {
 		}
 
 		render () {
+			const {...rest} = this.props;
+
+			delete rest.screenScale;
+
+			if (this.props.screenScale) updateScreenScale(this.props.screenScale);
+
 			// Check if the classes are different from our previous classes
 			let classes = getResolutionClasses();
 
 			if (this.props.className) classes += (classes ? ' ' : '') + this.props.className;
-			return <Wrapped {...this.props} className={classes} />;
+			return <Wrapped {...rest} className={classes} />;
 		}
 	};
 });
