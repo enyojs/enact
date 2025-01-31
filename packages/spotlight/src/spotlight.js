@@ -331,6 +331,17 @@ const Spotlight = (function () {
 		const next = getTargetByDirectionFromPosition(direction, position, containerId);
 
 		if (next) {
+			const currentContainerIds = getContainersForNode(getContainerNode(containerId));
+			const nextContainerIds = getContainersForNode(next);
+
+			notifyLeaveContainer(
+				direction,
+				null,
+				currentContainerIds,
+				next,
+				nextContainerIds
+			);
+
 			setContainerPreviousTarget(
 				containerId,
 				direction,
@@ -338,7 +349,17 @@ const Spotlight = (function () {
 				getContainerLastFocusedElement(containerId)
 			);
 
-			return focusElement(next, getContainersForNode(next));
+			const focused = focusElement(next, getContainersForNode(next));
+
+			notifyEnterContainer(
+				direction,
+				null,
+				currentContainerIds,
+				next,
+				nextContainerIds
+			);
+
+			return focused;
 		}
 
 		return false;
