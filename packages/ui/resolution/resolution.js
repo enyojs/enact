@@ -1,4 +1,5 @@
 let baseScreen,
+	fontScale = 1,
 	orientation,
 	riRatio,
 	screenType,
@@ -203,11 +204,11 @@ function calculateFontSize (type) {
 	let size;
 
 	if (orientation === 'portrait' && config.orientationHandling === 'scale') {
-		size = scrObj.height / scrObj.width * scrObj.pxPerRem;
+		size = scrObj.height / scrObj.width * (scrObj.pxPerRem * fontScale);
 	} else {
-		size = scrObj.pxPerRem;
+		size = (scrObj.pxPerRem * fontScale);
 		if (orientation === 'landscape' && shouldScaleFontSize) {
-			size = parseInt(workspaceBounds.height * scrObj.pxPerRem / scrObj.height);
+			size = parseInt(workspaceBounds.height * (scrObj.pxPerRem * fontScale) / scrObj.height);
 		}
 	}
 	return size + 'px';
@@ -224,6 +225,17 @@ function updateBaseFontSize (size) {
 	if (typeof window === 'object') {
 		document.documentElement.style.fontSize = size;
 	}
+}
+
+/**
+ * @function
+ * @memberof ui/resolution
+ * @param {Number}    fontScaleValue     The value to scale the base font size.
+ * @returns {undefined}
+ * @private
+ */
+function updateFontScale (fontScaleValue) {
+	fontScale = fontScaleValue;
 }
 
 /**
@@ -334,7 +346,7 @@ function getAspectRatioName (type) {
  * @public
  */
 function scale (px) {
-	return (riRatio || getRiRatio()) * px;
+	return (riRatio || getRiRatio()) * px * fontScale;
 }
 
 /**
@@ -367,8 +379,7 @@ function unit (pixels, toUnit) {
 	if (!toUnit || !unitToPixelFactors[toUnit]) return;
 	if (typeof pixels === 'string' && pixels.substr(-2) === 'px') pixels = parseInt(pixels.substr(0, pixels.length - 2));
 	if (typeof pixels !== 'number') return;
-
-	return (pixels / unitToPixelFactors[toUnit]) + '' + toUnit;
+	return (pixels / (fontScale * unitToPixelFactors[toUnit])) + '' + toUnit;
 }
 
 /**
@@ -496,5 +507,7 @@ export {
 	scaleToRem,
 	selectSrc,
 	unit,
-	unitToPixelFactors
+	unitToPixelFactors,
+	updateBaseFontSize,
+	updateFontScale
 };
