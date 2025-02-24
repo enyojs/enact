@@ -1,0 +1,43 @@
+//
+// Card.module.less
+.card {
+	box-sizing: border-box;
+	padding: 1rem;
+
+	.image {
+		display: block; // leaving this to prevent whitespace between inline-block elements
+		margin: 0;
+	}
+
+	.children,
+	&.selected {
+		/* Public Class Names */
+	}
+
+	&.textOverlay {
+		.imageContainer {
+			height: 100%;
+			position: relative;
+		}
+		.children {
+			position: absolute;
+			bottom: 0;
+			left: 50%;
+			transform: translate(-50%);
+		}
+	}
+
+	&.horizontal {
+		.image {
+			width: 25%;
+			height: 100%;
+		}
+	}
+
+	&.vertical {
+		.image {
+			width: 100%;
+			height: 100%;
+		}
+	}
+}
