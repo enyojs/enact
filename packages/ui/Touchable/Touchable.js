@@ -8,7 +8,6 @@
 
 import hoc from '@enact/core/hoc';
 import PropTypes from 'prop-types';
-import {forwardRef} from 'react';
 
 import {configure} from './config';
 
@@ -108,8 +107,8 @@ const Touchable = hoc(defaultConfig, (config, Wrapped) => {
 	} = config;
 
 	// eslint-disable-next-line no-shadow
-	const Touchable = forwardRef((props, ref) => {
-		const {disabled = false, noResume = false, ...rest} = props;
+	const Touchable = (props) => {
+		const {disabled = false, noResume = false, ref, ...rest} = props;
 		const {configForHook, propsForWrapped} = selectProps({disabled, noResume, ...rest});
 		const hook = useTouch({getActive: !!activeProp, ...configForHook});
 
@@ -122,7 +121,7 @@ const Touchable = hoc(defaultConfig, (config, Wrapped) => {
 		return (
 			<Wrapped {...propsForWrapped} ref={ref} />
 		);
-	});
+	};
 
 	Touchable.propTypes = {
 		/**
@@ -367,7 +366,15 @@ const Touchable = hoc(defaultConfig, (config, Wrapped) => {
 		 * @type {Object}
 		 * @public
 		 */
-		pinchConfig: pinchConfigPropType
+		pinchConfig: pinchConfigPropType,
+
+		/**
+		 * Forwards a reference to this component.
+		 *
+		 * @type {Object}
+		 * @public
+		 */
+		ref: PropTypes.object
 	};
 
 	Touchable.displayName = 'Touchable';
